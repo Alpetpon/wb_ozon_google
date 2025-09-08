@@ -7,6 +7,8 @@ import asyncio
 from typing import List, Dict, Any, Optional, Tuple
 from loguru import logger
 import os
+import json
+import base64
 
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
@@ -36,15 +38,42 @@ class GoogleSheetsClient:
     async def authenticate(self):
         """Аутентификация с Google API"""
         try:
-            if os.path.exists(self.credentials_file):
-                # Используем service account credentials
+            # Пробуем загрузить из переменных окружения
+            credentials_json = os.getenv('GOOGLE_CREDENTIALS_JSON')
+            credentials_base64 = os.getenv('GOOGLE_CREDENTIALS_BASE64')
+            
+            if credentials_base64:
+                # Используем base64 кодированные credentials
+                try:
+                    decoded_credentials = base64.b64decode(credentials_base64).decode('utf-8')
+                    credentials_info = json.loads(decoded_credentials)
+                    self.creds = ServiceAccountCredentials.from_service_account_info(
+                        credentials_info, scopes=self.SCOPES
+                    )
+                    logger.info("Authenticated with service account from base64 environment variable")
+                except (base64.binascii.Error, json.JSONDecodeError, UnicodeDecodeError) as e:
+                    logger.error(f"Invalid base64 or JSON in GOOGLE_CREDENTIALS_BASE64: {e}")
+                    raise
+            elif credentials_json:
+                # Используем credentials из переменной окружения как JSON
+                try:
+                    credentials_info = json.loads(credentials_json)
+                    self.creds = ServiceAccountCredentials.from_service_account_info(
+                        credentials_info, scopes=self.SCOPES
+                    )
+                    logger.info("Authenticated with service account from JSON environment variable")
+                except json.JSONDecodeError as e:
+                    logger.error(f"Invalid JSON in GOOGLE_CREDENTIALS_JSON: {e}")
+                    raise
+            elif os.path.exists(self.credentials_file):
+                # Используем service account credentials из файла
                 self.creds = ServiceAccountCredentials.from_service_account_file(
                     self.credentials_file, scopes=self.SCOPES
                 )
-                logger.info("Authenticated with service account")
+                logger.info("Authenticated with service account from file")
             else:
-                logger.error(f"Credentials file not found: {self.credentials_file}")
-                raise FileNotFoundError(f"Credentials file not found: {self.credentials_file}")
+                logger.error(f"No Google credentials found. Set GOOGLE_CREDENTIALS_BASE64 or GOOGLE_CREDENTIALS_JSON environment variable, or provide file: {self.credentials_file}")
+                raise FileNotFoundError(f"No Google credentials found")
             
             # Создаем сервис
             self.service = build('sheets', 'v4', credentials=self.creds)

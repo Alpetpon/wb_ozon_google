@@ -219,9 +219,12 @@ class ConfigLoader:
                 logger.error("Google Sheets configuration incomplete")
                 return False
             
-            # Проверяем файл credentials
-            if not Path(sheets_config.credentials_file).exists():
-                logger.error(f"Google credentials file not found: {sheets_config.credentials_file}")
+            # Проверяем файл credentials или переменные окружения
+            credentials_json = os.getenv('GOOGLE_CREDENTIALS_JSON')
+            credentials_base64 = os.getenv('GOOGLE_CREDENTIALS_BASE64')
+            
+            if not credentials_base64 and not credentials_json and not Path(sheets_config.credentials_file).exists():
+                logger.error(f"No Google credentials found. Set GOOGLE_CREDENTIALS_BASE64 or GOOGLE_CREDENTIALS_JSON environment variable, or provide file: {sheets_config.credentials_file}")
                 return False
             
             # Проверяем маппинг таблиц
