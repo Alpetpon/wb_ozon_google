@@ -1,0 +1,74 @@
+# Docker Compose для сервиса синхронизации
+version: '3.8'
+
+services:
+  sync-service:
+    build: .
+    container_name: mysql-sheets-sync
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      # MySQL Configuration
+      - MYSQL_HOST=${MYSQL_HOST:-mysql.559b5f87f193.hosting.myjino.ru}
+      - MYSQL_USER=${MYSQL_USER:-j01007093_user}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD:-3xEr4euhsb}
+      - MYSQL_DATABASE=${MYSQL_DATABASE:-j01007093_ozon}
+      - MYSQL_PORT=${MYSQL_PORT:-3306}
+      
+      # Google Sheets API
+      - GOOGLE_CREDENTIALS_FILE=${GOOGLE_CREDENTIALS_FILE:-/app/credentials/google.json}
+      - GOOGLE_SPREADSHEET_ID=${GOOGLE_SPREADSHEET_ID}
+      
+      # Service Configuration
+      - SYNC_INTERVAL_SECONDS=${SYNC_INTERVAL_SECONDS:-300}
+      - BATCH_SIZE=${BATCH_SIZE:-1000}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      
+      # FastAPI Service
+      - API_HOST=${API_HOST:-0.0.0.0}
+      - API_PORT=${API_PORT:-8000}
+      - API_SECRET_KEY=${API_SECRET_KEY:-your-secret-key-here}
+    
+    volumes:
+      # Монтируем директорию с credentials
+      - ./credentials:/app/credentials:ro
+      # Монтируем директорию с логами
+      - ./logs:/app/logs
+      # Монтируем конфиг файл
+      - ./config.env:/app/config.env:ro
+    
+    depends_on:
+      - mysql
+    
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Опционально: локальная MySQL для тестирования
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-local
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=sync_test
+      - MYSQL_USER=syncuser
+      - MYSQL_PASSWORD=syncpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./sync_service/triggers:/docker-entrypoint-initdb.d
+    profiles:
+      - local  # Используется только при запуске с профилем local
+
+volumes:
+  mysql_data:
+
+networks:
+  default:
+    name: sync-network

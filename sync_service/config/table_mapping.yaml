@@ -1,0 +1,612 @@
+# Конфигурация маппинга таблиц MySQL <-> Google Sheets
+
+tables:
+  # ========================================
+  # WILDBERRIES ТАБЛИЦЫ
+  # ========================================
+  
+  # WB Воронка продаж
+  voronka_wb:
+    enabled: true
+    sheet_name: "wb_voronka"
+    sheet_range: "A:S"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 1000
+    primary_key: "id"
+    unique_keys: ["nmID", "cabinet", "dF"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      dF: "Дата"
+      nmID: "Номенклатура ID"
+      vendorCode: "Код поставщика"
+      brandName: "Бренд"
+      object_id: "ID объекта"
+      object_name: "Название объекта"
+      openCardCount: "Открытия карточки"
+      addToCartCount: "Добавления в корзину"
+      ordersCount: "Количество заказов"
+      buyoutsCount: "Количество выкупов"
+      cancelCount: "Количество отмен"
+      ordersSumRub: "Сумма заказов, руб"
+      buyoutsSumRub: "Сумма выкупов, руб"
+      cancelSumRub: "Сумма отмен, руб"
+      stocksWb: "Остатки WB"
+      stocksMp: "Остатки МП"
+
+  # WB Детализация
+  detaliz_wb:
+    enabled: true
+    sheet_name: "wb_detaliz"
+    sheet_range: "A:AQ"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 500
+    primary_key: "id"
+    unique_keys: ["rrd_id", "cabinet"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      realizationreport_id: "ID отчета"
+      date_from: "Дата с"
+      date_to: "Дата по"
+      create_dt: "Дата создания"
+      currency_name: "Валюта"
+      suppliercontract_code: "Код договора"
+      rrd_id: "RRD ID"
+      gi_id: "GI ID"
+      subject_name: "Предмет"
+      nm_id: "Номенклатура"
+      brand_name: "Бренд"
+      sa_name: "Артикул поставщика"
+      ts_name: "Размер"
+      barcode: "Штрихкод"
+      doc_type_name: "Тип документа"
+      quantity: "Количество"
+      retail_price: "Цена розничная"
+      retail_amount: "Сумма розничная"
+      sale_percent: "Скидка %"
+      commission_percent: "Комиссия %"
+      office_name: "Офис"
+      supplier_oper_name: "Операция поставщика"
+      order_dt: "Дата заказа"
+      sale_dt: "Дата продажи"
+      rr_dt: "Дата отчета"
+      shk_id: "ШК ID"
+      retail_price_withdisc_rub: "Цена со скидкой"
+      delivery_amount: "Сумма доставки"
+      return_amount: "Сумма возврата"
+      delivery_rub: "Доставка руб"
+      gi_box_type_name: "Тип коробки"
+      product_discount_for_report: "Скидка товара"
+      supplier_promo: "Промо поставщика"
+      rid: "RID"
+      ppvz_spp_prc: "СПП %"
+      ppvz_kvw_prc_base: "КВВ % база"
+      ppvz_kvw_prc: "КВВ %"
+      sup_rating_prc_up: "Рейтинг поставщика"
+      is_kgvp_v2: "КГВП v2"
+      ppvz_sales_commission: "Комиссия продаж"
+      ppvz_for_pay: "К доплате"
+      ppvz_reward: "Вознаграждение"
+      acquiring_fee: "Эквайринг"
+      acquiring_bank: "Банк эквайринга"
+      ppvz_vw: "ВВ"
+      ppvz_vw_nds: "ВВ НДС"
+      ppvz_office_id: "ID офиса"
+      ppvz_office_name: "Название офиса"
+      ppvz_supplier_id: "ID поставщика"
+      ppvz_supplier_name: "Название поставщика"
+      ppvz_inn: "ИНН"
+      declaration_number: "Номер декларации"
+      bonus_type_name: "Тип бонуса"
+      sticker_id: "ID стикера"
+      site_country: "Страна сайта"
+      penalty: "Штраф"
+      additional_payment: "Доплата"
+      rebill_logistic_cost: "Перевыставление логистики"
+      rebill_logistic_org: "Организация логистики"
+      kiz: "КИЗ"
+      storage_fee: "Плата за хранение"
+      deduction: "Удержание"
+      acceptance: "Приемка"
+      srid: "SRID"
+      report_type: "Тип отчета"
+
+  # WB Цены
+  price_wb:
+    enabled: true
+    sheet_name: "wb_price"
+    sheet_range: "A:L"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 1000
+    primary_key: "id"
+    unique_keys: ["artWB", "cabinet", "dF"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      dF: "Дата"
+      artWB: "Артикул WB"
+      article_size: "Артикул размер"
+      item_name: "Название товара"
+      vendCode: "Код поставщика"
+      price: "Цена"
+      discount: "Скидка"
+      price_with_discount: "Цена со скидкой"
+      price_with_spp: "Цена с СПП"
+      spp: "СПП"
+
+  # WB Товары
+  tovar_wb:
+    enabled: true
+    sheet_name: "wb_tovar"
+    sheet_range: "A:Q"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 500
+    primary_key: "id"
+    unique_keys: ["artWB", "cabinet"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      artWB: "Артикул WB"
+      vendorCode: "Код поставщика"
+      subjectName: "Предмет"
+      brand: "Бренд"
+      title: "Название"
+      video: "Видео"
+      description: "Описание"
+      photo: "Фото"
+      width: "Ширина"
+      height: "Высота"
+      length: "Длина"
+      weightBrutto: "Вес брутто"
+      barcode: "Штрихкод"
+      techSize: "Размер тех"
+      wbSize: "Размер WB"
+
+  # WB Склад (остатки)
+  stock_wb:
+    enabled: true
+    sheet_name: "wb_sklad"
+    sheet_range: "A:K"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 1000
+    primary_key: "id"
+    unique_keys: ["nmId", "warehouseName", "cabinet", "dF"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      dF: "Дата"
+      nmId: "Номенклатура ID"
+      barcode: "Штрихкод"
+      techSize: "Размер"
+      warehouseName: "Склад"
+      quantity: "Количество"
+      inWayToClient: "В пути к клиенту"
+      inWayFromClient: "В пути от клиента"
+      quantityFull: "Количество полное"
+
+  # WB Приемка
+  priem_wb:
+    enabled: true
+    sheet_name: "wb_priem"
+    sheet_range: "A:J"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 1000
+    primary_key: "id"
+    unique_keys: ["incomeId", "cabinet"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      dF: "Дата"
+      count: "Количество"
+      giCreateDate: "Дата создания ГИ"
+      incomeId: "ID поступления"
+      nmID: "Номенклатура ID"
+      shkСreateDate: "Дата создания ШК"
+      subjectName: "Предмет"
+      total: "Итого"
+
+  # WB Реклама
+  rekl_wb:
+    enabled: true
+    sheet_name: "wb_reklam"
+    sheet_range: "A:S"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 1000
+    primary_key: "id"
+    unique_keys: ["advertId", "nmId", "cabinet", "dF"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      dF: "Дата"
+      advertId: "ID рекламы"
+      adname: "Название РК"
+      typid: "Тип ID"
+      appType: "Тип приложения"
+      nmId: "Номенклатура ID"
+      name: "Название"
+      views: "Показы"
+      clicks: "Клики"
+      ctr: "CTR"
+      cpc: "CPC"
+      sum: "Сумма"
+      atbs: "ATBS"
+      orders: "Заказы"
+      cr: "CR"
+      shks: "ШК"
+      sum_price: "Сумма цена"
+
+  # ========================================
+  # OZON ТАБЛИЦЫ
+  # ========================================
+
+  # OZON Детализация
+  detaliz:
+    enabled: true
+    sheet_name: "ozon_detaliz"
+    sheet_range: "A:Y"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 500
+    primary_key: "id"
+    unique_keys: ["cabinet", "c1", "c2", "c3"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      c1: "Колонка 1"
+      c2: "Колонка 2"
+      c3: "Колонка 3"
+      c4: "Колонка 4"
+      c5: "Колонка 5"
+      c6: "Колонка 6"
+      c7: "Колонка 7"
+      c8: "Колонка 8"
+      c9: "Колонка 9"
+      c10: "Колонка 10"
+      c11: "Колонка 11"
+      c12: "Колонка 12"
+      c13: "Колонка 13"
+      c14: "Колонка 14"
+      c15: "Колонка 15"
+      c16: "Колонка 16"
+      c17: "Колонка 17"
+      c18: "Колонка 18"
+      c19: "Колонка 19"
+      c20: "Колонка 20"
+      c21: "Колонка 21"
+      c22: "Колонка 22"
+      c23: "Колонка 23"
+      c24: "Колонка 24"
+
+  # OZON Реклама
+  stat_rk:
+    enabled: true
+    sheet_name: "ozon_reklam"
+    sheet_range: "A:S"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 1000
+    primary_key: "id"
+    unique_keys: ["id_rk", "sku", "cabinet", "date"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      id_rk: "ID РК"
+      type_rekl: "Тип рекламы"
+      title_rk: "Название РК"
+      date: "Дата"
+      sku: "SKU"
+      views: "Показы"
+      clicks: "Клики"
+      ctr: "CTR"
+      moneySpent: "Потрачено"
+      avgBid: "Средняя ставка"
+      orders: "Заказы"
+      ordersMoney: "Сумма заказов"
+      models: "Модели"
+      modelsMoney: "Сумма моделей"
+      title_t: "Название товара"
+      price: "Цена"
+      toCart: "В корзину"
+
+  # OZON Товары
+  tovar:
+    enabled: true
+    sheet_name: "ozon_tovar"
+    sheet_range: "A:R"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 500
+    primary_key: "id"
+    unique_keys: ["sku", "cabinet"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      sku: "SKU"
+      offer_id: "Offer ID"
+      title: "Название"
+      barcode: "Штрихкод"
+      old_price: "Старая цена"
+      min_price: "Мин цена"
+      marketing_price: "Маркетинговая цена"
+      price: "Цена"
+      marketing_seller_price: "Цена продавца"
+      volume_weight: "Объемный вес"
+      height: "Высота"
+      depth: "Глубина"
+      width: "Ширина"
+      weight: "Вес"
+      vol: "Объем"
+      img: "Изображение"
+
+  # OZON Цены
+  prices:
+    enabled: true
+    sheet_name: "ozon_price"
+    sheet_range: "A:L"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 1000
+    primary_key: "id"
+    unique_keys: ["sku", "cabinet", "dat"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      dat: "Дата"
+      sku: "SKU"
+      offer_id: "Offer ID"
+      title: "Название"
+      barcode: "Штрихкод"
+      old_price: "Старая цена"
+      min_price: "Мин цена"
+      marketing_price: "Маркетинговая цена"
+      price: "Цена"
+      marketing_seller_price: "Цена продавца"
+
+  # OZON Воронка
+  voronka:
+    enabled: true
+    sheet_name: "ozon_voronka"
+    sheet_range: "A:T"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 1000
+    primary_key: "id"
+    unique_keys: ["sku", "cabinet", "dat"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      dat: "Дата"
+      sku: "SKU"
+      nam: "Название"
+      empt: "Пусто"
+      ordered_units: "Заказанные единицы"
+      revenue: "Выручка"
+      session_view: "Просмотры сессии"
+      session_view_pdp: "Просмотры PDP"
+      conv_tocart_pdp: "Конверсия в корзину PDP"
+      cancellations: "Отмены"
+      returns: "Возвраты"
+      position_category: "Позиция в категории"
+      hits_view_search: "Показы в поиске"
+      session_view_search: "Просмотры в поиске"
+      conv_tocart_search: "Конверсия в корзину поиск"
+      conv_tocart: "Конверсия в корзину"
+      hits_tocart_search: "Хиты в корзину поиск"
+      hits_view: "Показы"
+
+  # OZON Заказы FBO
+  zakaz_fbo:
+    enabled: true
+    sheet_name: "ozon_zakfbo"
+    sheet_range: "A:Y"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 500
+    primary_key: "id"
+    unique_keys: ["cabinet", "c1", "c2"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      c0: "Колонка 0"
+      c1: "Колонка 1"
+      c2: "Колонка 2"
+      c3: "Колонка 3"
+      c4: "Колонка 4"
+      c5: "Колонка 5"
+      c6: "Колонка 6"
+      c7: "Колонка 7"
+      c8: "Колонка 8"
+      c9: "Колонка 9"
+      c10: "Колонка 10"
+      c11: "Колонка 11"
+      c12: "Колонка 12"
+      c13: "Колонка 13"
+      c14: "Колонка 14"
+      c15: "Колонка 15"
+      c16: "Колонка 16"
+      c17: "Колонка 17"
+      c18: "Колонка 18"
+      c19: "Колонка 19"
+      c20: "Колонка 20"
+      c21: "Колонка 21"
+      c22: "Колонка 22"
+      c23: "Колонка 23"
+      c24: "Колонка 24"
+
+  # OZON Продажи FBO (report_fbo)
+  report_fbo:
+    enabled: true
+    sheet_name: "ozon_prodfbo"
+    sheet_range: "A:U"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 500
+    primary_key: "id"
+    unique_keys: ["order_id", "sku", "cabinet"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      order_id: "ID заказа"
+      order_number: "Номер заказа"
+      posting_number: "Номер отправления"
+      status: "Статус"
+      cancel_reason_id: "Причина отмены"
+      created_at: "Создан"
+      in_process_at: "В обработке"
+      sku: "SKU"
+      name: "Название"
+      quantity: "Количество"
+      price: "Цена"
+      cluster_from: "Кластер откуда"
+      cluster_to: "Кластер куда"
+      delivery_type: "Тип доставки"
+      is_premium: "Премиум"
+      payment_type_group_name: "Тип оплаты"
+      warehouse_id: "ID склада"
+      warehouse_name: "Название склада"
+      is_legal: "Юрлицо"
+
+  # OZON Заказы FBS
+  zakaz_fbs:
+    enabled: true
+    sheet_name: "ozon_zakfbs"
+    sheet_range: "A:Y"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 500
+    primary_key: "id"
+    unique_keys: ["cabinet", "c1", "c2"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      c0: "Колонка 0"
+      c1: "Колонка 1"
+      c2: "Колонка 2"
+      c3: "Колонка 3"
+      c4: "Колонка 4"
+      c5: "Колонка 5"
+      c6: "Колонка 6"
+      c7: "Колонка 7"
+      c8: "Колонка 8"
+      c9: "Колонка 9"
+      c10: "Колонка 10"
+      c11: "Колонка 11"
+      c12: "Колонка 12"
+      c13: "Колонка 13"
+      c14: "Колонка 14"
+      c15: "Колонка 15"
+      c16: "Колонка 16"
+      c17: "Колонка 17"
+      c18: "Колонка 18"
+      c19: "Колонка 19"
+      c20: "Колонка 20"
+      c21: "Колонка 21"
+      c22: "Колонка 22"
+      c23: "Колонка 23"
+      c24: "Колонка 24"
+
+  # OZON Продажи FBS (report_fbs)
+  report_fbs:
+    enabled: true
+    sheet_name: "ozon_prodfbs"
+    sheet_range: "A:AK"
+    sync_direction: "mysql_to_sheets"
+    batch_size: 500
+    primary_key: "id"
+    unique_keys: ["order_id", "posting_number", "cabinet"]
+    fields:
+      id: "ID"
+      cabinet: "Кабинет"
+      order_id: "ID заказа"
+      posting_number: "Номер отправления"
+      order_number: "Номер заказа"
+      in_process_at: "В обработке"
+      shipment_date: "Дата отгрузки"
+      delivering_date: "Дата доставки"
+      delivery_date_begin: "Дата доставки начало"
+      delivery_date_end: "Дата доставки конец"
+      status: "Статус"
+      sku: "SKU"
+      offer_id: "Offer ID"
+      name: "Название"
+      quantity: "Количество"
+      old_price: "Старая цена"
+      price: "Цена"
+      total_discount_value: "Общая скидка"
+      total_discount_percent: "Процент скидки"
+      delivery_method_name: "Способ доставки"
+      warehouse_name: "Склад"
+      tpl_provider: "TPL провайдер"
+      tracking_number: "Трек номер"
+      tpl_integration_type: "Тип интеграции TPL"
+      region_post_rfbs: "Регион почты"
+      city_post_rfbs: "Город почты"
+      cluster_from: "Кластер откуда"
+      cluster_to: "Кластер куда"
+      substatus: "Подстатус"
+
+# ========================================
+# УПРАВЛЯЮЩИЕ ЛИСТЫ
+# ========================================
+
+# Эти листы не являются таблицами MySQL, но важны для управления системой
+management_sheets:
+  # Лист управления синхронизацией
+  tech_sheet:
+    sheet_name: "tech"
+    description: "Управление синхронизацией таблиц"
+    fields:
+      - "Код клиента"
+      - "ID таблицы"
+      - "Таблица загрузки"
+      - "Начало периода"
+      - "Конец периода"
+      - "Выгружено в базу"
+      - "Выгружено из базы"
+
+  # Лист пользователей
+  users_sheet:
+    sheet_name: "list"
+    description: "Управление пользователями"
+    fields:
+      - "ID"
+      - "Имя"
+      - "Ник Телеграм"
+      - "Дата первого входа"
+      - "Дата последнего обновления"
+      - "Дата окончания периода"
+      - "Активен"
+      - "Тип доступа"
+      - "Ссылка на таблицу"
+      - "Таблица"
+
+  # Лист настроек бота
+  settings_sheet:
+    sheet_name: "настройки"
+    description: "Настройки бота и ссылки"
+
+  # Лист шаблонов
+  templates_sheet:
+    sheet_name: "настройки 2"
+    description: "ID шаблонов таблиц"
+    templates:
+      wb: "12ZvJjtK7_v8Dkyb9dW4XSn5LYbEv8q956cCi1pBy3QA"
+      ozon: "1npnKU9N9KFpesv8zgwpHR3in9cs7xp7ON3EXgbqw3-c"
+      wb_ozon: "1SvpSBBhdZsRzHBDRZab8qguOYpY-xbGDd4jdbaaZgzM"
+
+# Глобальные настройки синхронизации
+sync_settings:
+  # Интервал синхронизации в секундах
+  default_sync_interval: 300
+  
+  # Максимальный размер батча
+  max_batch_size: 2000
+  
+  # Таймаут для операций с Google Sheets API
+  sheets_api_timeout: 30
+  
+  # Количество попыток повтора при ошибках
+  retry_attempts: 3
+  
+  # Задержка между попытками (секунды)
+  retry_delay: 5
+  
+  # Логирование
+  log_level: "INFO"
+  log_file: "logs/sync.log"
+  
+  # Очистка старых логов (дни)
+  log_retention_days: 30
