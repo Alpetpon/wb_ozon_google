@@ -28,9 +28,6 @@ Thumbs.db
 .env
 config.env
 
-# Credentials
-credentials/credentials.json
-
 # MySQL
 *.sql~
 
